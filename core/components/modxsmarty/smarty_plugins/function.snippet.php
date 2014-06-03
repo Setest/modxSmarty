@@ -28,7 +28,7 @@ function smarty_function_snippet($params, & $smarty)
     }
 
     // для того чтобы получить вывод сниппета через return
-    $direct = (isset($params['direct']) && ($params['direct']||$scriptProperties['direct']) )? true :false;
+    $direct = ( (isset($params['direct']) && $params['direct']==true) || ($scriptProperties['direct']==true) )? true :false;
 
     if (!$direct){
         $output = $modx->runSnippet($name, $scriptProperties);
