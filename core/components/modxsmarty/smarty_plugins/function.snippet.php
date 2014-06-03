@@ -36,8 +36,18 @@ function smarty_function_snippet($params, & $smarty)
         if($s = $modx->getObject('modSnippet', array(
             'name' => $name,
         ))){
-            $s->loadScript();   // если запустить его ранее через runSnippet, то валит ошибку мол двойное объявление функции
+
+            // if (!$modx->sourceCache['modSnippet'][$name]){
+                // $s->loadScript();   // если запустить его ранее через runSnippet, то валит ошибку мол двойное объявление функции
+            // }
             $f = $s->getScriptName();   // имя функции из кеша в данном случае elements_modsnippet_11
+            if(!function_exists($f)) {
+                if (!$s->loadScript()) {
+                    $output = false;
+                }else{
+                    $s->setCacheable(false);
+                }
+            }
             $output  = $f($scriptProperties);
         }
     }
@@ -48,7 +58,5 @@ function smarty_function_snippet($params, & $smarty)
         $modx->parser->processElementTags('', $output, true, true, '[[', ']]', array(), $maxIterations);
     }
 
-    return !empty($assign) ? $smarty->assign($assign, $output) : $output;
+    return (!empty($assign) ) ? $smarty->assign($assign, $output) : $output;
 }
-
-?>
